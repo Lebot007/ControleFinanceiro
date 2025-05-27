@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Sidebar from './components/Sidebar';
 import Dashboard from './pages/Dashboard';
 import Receitas from './pages/Receitas';
@@ -14,6 +14,24 @@ import { MetasProvider } from './contexts/MetasContext';
 function App() {
   const [paginaAtual, setPaginaAtual] = useState('dashboard');
   const [menuMobileAberto, setMenuMobileAberto] = useState(false);
+
+  // Bloqueia o scroll do body quando o menu mobile está aberto (corrige bug iOS)
+  useEffect(() => {
+    if (menuMobileAberto) {
+      document.body.style.overflow = 'hidden';
+      document.body.style.position = 'fixed';
+      document.body.style.width = '100%';
+    } else {
+      document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.width = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.width = '';
+    };
+  }, [menuMobileAberto]);
 
   const renderizarPagina = () => {
     switch (paginaAtual) {

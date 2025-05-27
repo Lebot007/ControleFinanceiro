@@ -2,6 +2,7 @@ import React from 'react';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { Doughnut } from 'react-chartjs-2';
 import { useDados } from '../../contexts/DadosContext';
+import { TooltipItem } from 'chart.js';
 
 // Registrar componentes do Chart.js
 ChartJS.register(ArcElement, Tooltip, Legend);
@@ -30,7 +31,7 @@ const GraficoDespesasCategorias: React.FC<GraficoDespesasCategoriasProps> = ({ p
       },
       tooltip: {
         callbacks: {
-          label: function(context: any) {
+          label: function(context: TooltipItem<'doughnut'>) {
             const label = context.label || '';
             const value = context.parsed || 0;
             return `${label}: ${value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}`;

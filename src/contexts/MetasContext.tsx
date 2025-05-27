@@ -1,15 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-
-export interface Meta {
-  id: string;
-  titulo: string;
-  valorAlvo: number;
-  valorAtual: number;
-  dataInicio: string;
-  dataFinal?: string;
-  cor: string;
-  ativa: boolean;
-}
+import { Meta, CORES_METAS } from '../types';
+import { calcularProgressoMetaHelper, gerarIdMeta, obterMetasStorage, salvarMetasStorage } from '../utils/metasHelpers';
 
 interface MetasContextType {
   metas: Meta[];
@@ -34,30 +25,25 @@ interface MetasProviderProps {
   children: ReactNode;
 }
 
-const CORES_METAS = [
-  '#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6',
-  '#EC4899', '#14B8A6', '#6366F1', '#D946EF', '#F97316'
-];
-
 export const MetasProvider: React.FC<MetasProviderProps> = ({ children }) => {
   const [metas, setMetas] = useState<Meta[]>([]);
 
   // Carregar metas do localStorage ao iniciar
   useEffect(() => {
-    const metasSalvas = localStorage.getItem('metas');
-    if (metasSalvas) setMetas(JSON.parse(metasSalvas));
+    const metasSalvas = obterMetasStorage();
+    if (metasSalvas) setMetas(metasSalvas);
   }, []);
 
   // Salvar metas no localStorage quando mudam
   useEffect(() => {
-    localStorage.setItem('metas', JSON.stringify(metas));
+    salvarMetasStorage(metas);
   }, [metas]);
 
   const adicionarMeta = (meta: Omit<Meta, 'id'>) => {
     const index = metas.length % CORES_METAS.length;
     const novaMeta: Meta = {
       ...meta,
-      id: crypto.randomUUID(),
+      id: gerarIdMeta(),
       cor: meta.cor || CORES_METAS[index],
       dataInicio: meta.dataInicio || new Date().toISOString(),
       ativa: meta.ativa !== undefined ? meta.ativa : true
@@ -97,7 +83,7 @@ export const MetasProvider: React.FC<MetasProviderProps> = ({ children }) => {
     const meta = metas.find(m => m.id === id);
     if (!meta) return 0;
     
-    const progresso = (meta.valorAtual / meta.valorAlvo) * 100;
+    const progresso = calcularProgressoMetaHelper(meta);
     return Math.min(progresso, 100); // Limita a 100% mesmo se ultrapassar
   };
 

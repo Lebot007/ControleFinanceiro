@@ -37,7 +37,7 @@ interface DadosContextType {
   calcularDespesasPorCategoria: (periodo?: 'mes' | 'ano') => { categoria: string; valor: number; cor: string }[];
   exportarDados: () => string;
   importarDados: (dados: string) => boolean;
-  obterDadosGrafico: (tipo: 'receitas-despesas' | 'categorias' | 'evolucao', periodo?: 'mes' | 'ano') => any;
+  obterDadosGrafico: (tipo: 'receitas-despesas' | 'categorias' | 'evolucao', periodo?: 'mes' | 'ano') => unknown;
 }
 
 const DadosContext = createContext<DadosContextType | undefined>(undefined);
@@ -319,7 +319,7 @@ export const DadosProvider: React.FC<DadosProviderProps> = ({ children }) => {
       }
       
       return false;
-    } catch (error) {
+    } catch {
       alert('Erro ao importar dados. Verifique se o formato é válido.');
       return false;
     }

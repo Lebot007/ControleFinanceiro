@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Bell, CheckCircle, Trash2, RefreshCw } from 'lucide-react';
-import { useAlertas, Alerta } from '../contexts/AlertasContext';
+import { useAlertas } from '../contexts/AlertasContext';
 import { formatarDataBR } from '../utils/formatadores';
 
 const Alertas: React.FC = () => {

@@ -9,6 +9,9 @@ import {
   Tooltip,
   Filler,
   Legend,
+  TooltipItem,
+  Scale,
+  CoreScaleOptions,
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
 import { useDados } from '../../contexts/DadosContext';
@@ -39,7 +42,7 @@ const GraficoEvolucao: React.FC = () => {
       },
       tooltip: {
         callbacks: {
-          label: function(context: any) {
+          label: function(context: TooltipItem<'line'>) {
             const label = context.dataset.label || '';
             const value = context.parsed.y;
             return `${label}: ${value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}`;
@@ -50,8 +53,11 @@ const GraficoEvolucao: React.FC = () => {
     scales: {
       y: {
         ticks: {
-          callback: function(value: any) {
-            return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+          callback: function(this: Scale<CoreScaleOptions>, tickValue: string | number) {
+            if (typeof tickValue === 'number') {
+              return tickValue.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+            }
+            return tickValue;
           }
         }
       }

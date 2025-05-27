@@ -40,12 +40,6 @@ const Despesas: React.FC = () => {
     }
   };
 
-  const obterNomeCategoria = (id?: string) => {
-    if (!id) return 'Sem categoria';
-    const categoria = categorias.find(cat => cat.id === id);
-    return categoria ? categoria.nome : 'Sem categoria';
-  };
-
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-center">

@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
 import { useDados } from './DadosContext';
 
 export interface Alerta {
@@ -35,7 +35,7 @@ interface AlertasProviderProps {
 
 export const AlertasProvider: React.FC<AlertasProviderProps> = ({ children }) => {
   const [alertas, setAlertas] = useState<Alerta[]>([]);
-  const { despesas, calcularSaldoAtual, calcularTotalDespesas } = useDados();
+  const { despesas, calcularSaldoAtual } = useDados();
 
   // Carregar alertas do localStorage ao iniciar
   useEffect(() => {
@@ -58,7 +58,7 @@ export const AlertasProvider: React.FC<AlertasProviderProps> = ({ children }) =>
   // Verificar novas condições para gerar alertas quando despesas mudam
   useEffect(() => {
     gerarAlertasInteligentes();
-  }, [despesas]);
+  }, [despesas, gerarAlertasInteligentes]);
 
   const adicionarAlerta = (alerta: Omit<Alerta, 'id' | 'data' | 'lido'>) => {
     const novoAlerta: Alerta = {
@@ -90,7 +90,7 @@ export const AlertasProvider: React.FC<AlertasProviderProps> = ({ children }) =>
     }
   };
 
-  const gerarAlertasInteligentes = () => {
+  const gerarAlertasInteligentes = useCallback(() => {
     const hoje = new Date();
     const novosMensagens: Omit<Alerta, 'id' | 'data' | 'lido'>[] = [];
 
@@ -180,7 +180,7 @@ export const AlertasProvider: React.FC<AlertasProviderProps> = ({ children }) =>
     novosMensagens.forEach(mensagem => {
       adicionarAlerta(mensagem);
     });
-  };
+  }, [alertas, calcularSaldoAtual, despesas, adicionarAlerta]);
 
   const contextValue: AlertasContextType = {
     alertas,
